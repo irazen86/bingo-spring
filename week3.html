@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<!--
+ ____                 _           _ _
+|  _ \ ___ _ __ _ __ | | _____  _(_) |_ _   _
+| |_) / _ \ '__| '_ \| |/ _ \ \/ / | __| | | |
+|  __/  __/ |  | |_) | |  __/>  <| | |_| |_| |
+|_|   \___|_|  | .__/|_|\___/_/\_\_|\__|\__, |
+               |_|                      |___/
+  ____                            _
+ / ___|___  _ __ ___  _ __  _   _| |_ ___ _ __
+| |   / _ \| '_ ` _ \| '_ \| | | | __/ _ \ '__|
+| |__| (_) | | | | | | |_) | |_| | ||  __/ |
+ \____\___/|_| |_| |_| .__/ \__,_|\__\___|_|
+                      |_|
+https://www.perplexity.ai/computer
+-->
+<meta charset="UTF-8">
+<meta property="og:title" content="Бинго «Весеннее обновление»">
+<meta property="og:description" content="3 недели · 75 заданий · 5 категорий. Спорт, фото, порядок, коммуникация, новые практики. 30 марта — 19 апреля 2026">
+<meta property="og:image" content="og-image.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Бинго «Весеннее обновление»">
+<meta name="twitter:description" content="3 недели · 75 заданий · 5 категорий">
+<meta name="twitter:image" content="og-image.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Бинго — Неделя 3</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --sport: #4CAF50; --sport-bg: #E8F5E9; --sport-text: #2E7D32;
+    --photo: #FF9800; --photo-bg: #FFF3E0; --photo-text: #E65100;
+    --order: #2196F3; --order-bg: #E3F2FD; --order-text: #1565C0;
+    --comm: #E91E63; --comm-bg: #FCE4EC; --comm-text: #AD1457;
+    --habit: #9C27B0; --habit-bg: #F3E5F5; --habit-text: #6A1B9A;
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #F5F5F0;
+    min-height: 100vh;
+    padding: 12px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .header { text-align: center; margin-bottom: 12px; }
+  .header h1 { font-size: 20px; font-weight: 800; color: #2E7D32; line-height: 1.2; }
+  .header .week { font-size: 13px; color: #777; font-weight: 600; margin-top: 2px; }
+
+  .progress-bar { background: #E0E0E0; border-radius: 20px; height: 8px; margin: 10px auto 6px; max-width: 300px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #4CAF50, #8BC34A); border-radius: 20px; transition: width 0.4s ease; width: 0%; }
+  .progress-text { text-align: center; font-size: 12px; color: #888; font-weight: 600; margin-bottom: 12px; }
+
+  .legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 12px; }
+  .legend-item { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 12px; white-space: nowrap; }
+
+  .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; max-width: 600px; margin: 0 auto; }
+
+  .cell {
+    border-radius: 10px; border: 2px solid; padding: 6px 5px;
+    display: flex; flex-direction: column; align-items: center;
+    min-height: 90px; cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position: relative; user-select: none; -webkit-user-select: none;
+  }
+  .cell:active { transform: scale(0.95); }
+  .cell.done { opacity: 0.65; }
+  .cell.done::after {
+    content: '✓'; position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); font-size: 40px; font-weight: 800;
+    color: rgba(0,0,0,0.25); pointer-events: none;
+  }
+
+  .cell-cat { font-size: 7px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+  .cell-sep { width: 70%; height: 1px; margin-bottom: 4px; opacity: 0.4; }
+  .cell-text { font-size: 9px; font-weight: 600; text-align: center; color: #333; line-height: 1.3; flex: 1; display: flex; align-items: center; }
+  .cell-check {
+    width: 14px; height: 14px; border: 2px solid #ccc; border-radius: 3px;
+    margin-top: 3px; display: flex; align-items: center; justify-content: center;
+    font-size: 10px; transition: all 0.2s; flex-shrink: 0;
+  }
+  .cell.done .cell-check { background: #4CAF50; border-color: #4CAF50; color: white; }
+
+  .cat-sport { background: var(--sport-bg); border-color: var(--sport); }
+  .cat-sport .cell-cat { color: var(--sport-text); }
+  .cat-sport .cell-sep { background: var(--sport); }
+  .cat-photo { background: var(--photo-bg); border-color: var(--photo); }
+  .cat-photo .cell-cat { color: var(--photo-text); }
+  .cat-photo .cell-sep { background: var(--photo); }
+  .cat-order { background: var(--order-bg); border-color: var(--order); }
+  .cat-order .cell-cat { color: var(--order-text); }
+  .cat-order .cell-sep { background: var(--order); }
+  .cat-comm { background: var(--comm-bg); border-color: var(--comm); }
+  .cat-comm .cell-cat { color: var(--comm-text); }
+  .cat-comm .cell-sep { background: var(--comm); }
+  .cat-habit { background: var(--habit-bg); border-color: var(--habit); }
+  .cat-habit .cell-cat { color: var(--habit-text); }
+  .cat-habit .cell-sep { background: var(--habit); }
+
+  /* Locked cell */
+  .cell.locked {
+    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 30%, #fff9c4 60%, #ffe0b2 100%);
+    border-color: #c8e6c9; cursor: default;
+    justify-content: center; align-items: center;
+  }
+  .cell.locked:active { transform: none; }
+  .cell.locked .lock-content {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 100%; gap: 4px;
+  }
+  .cell.locked .lock-icon { font-size: 22px; line-height: 1; }
+  .cell.locked .lock-date { font-size: 8px; font-weight: 700; color: #7cb342; text-align: center; line-height: 1.2; }
+
+  .footer { text-align: center; padding: 16px 0 8px; font-size: 10px; color: #aaa; }
+  .footer a { color: #aaa; text-decoration: none; }
+
+  .nav { display: flex; justify-content: center; gap: 8px; margin-top: 12px; }
+  .nav a {
+    font-size: 12px; font-weight: 700; color: #4CAF50; text-decoration: none;
+    padding: 6px 16px; border: 2px solid #4CAF50; border-radius: 20px; transition: all 0.2s;
+  }
+  .nav a.active { background: #4CAF50; color: white; }
+
+  .bingo-alert {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center;
+  }
+  .bingo-alert.show { display: flex; }
+  .bingo-msg {
+    background: white; border-radius: 20px; padding: 30px 40px;
+    text-align: center; animation: popIn 0.4s ease;
+  }
+  .bingo-msg h2 { font-size: 28px; color: #2E7D32; margin-bottom: 8px; }
+  .bingo-msg p { font-size: 14px; color: #666; }
+  .bingo-msg button {
+    margin-top: 16px; padding: 8px 24px; border: none; background: #4CAF50;
+    color: white; font-family: 'Nunito', sans-serif; font-weight: 700;
+    font-size: 14px; border-radius: 20px; cursor: pointer;
+  }
+  @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+  /* Locked overlay for entire grid */
+  .grid-wrapper { position: relative; max-width: 600px; margin: 0 auto; }
+
+  .save-hint {
+    text-align: center; font-size: 11px; color: #999; margin-top: 12px; padding: 8px;
+    background: #f0f0e8; border-radius: 8px; max-width: 300px; margin-left: auto; margin-right: auto;
+  }
+
+  @media (min-width: 500px) {
+    .cell { min-height: 110px; padding: 8px 6px; }
+    .cell-text { font-size: 10px; }
+    .cell-cat { font-size: 8px; }
+    .header h1 { font-size: 24px; }
+    .cell.locked .lock-icon { font-size: 26px; }
+    .cell.locked .lock-date { font-size: 9px; }
+  }
+  @media (min-width: 700px) {
+    .cell { min-height: 130px; padding: 10px 8px; }
+    .cell-text { font-size: 11px; }
+    .cell-cat { font-size: 9px; }
+    .cell.locked .lock-icon { font-size: 30px; }
+    .cell.locked .lock-date { font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🌿 БИНГО «ВЕСЕННЕЕ ОБНОВЛЕНИЕ»</h1>
+  <div class="week">Неделя 3 · 13 — 19 апреля</div>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="progress-text" id="progressText">0 / 25</div>
+
+<div class="legend">
+  <span class="legend-item" style="background:var(--sport-bg);color:var(--sport-text);">Спорт</span>
+  <span class="legend-item" style="background:var(--photo-bg);color:var(--photo-text);">Фото</span>
+  <span class="legend-item" style="background:var(--order-bg);color:var(--order-text);">Порядок</span>
+  <span class="legend-item" style="background:var(--comm-bg);color:var(--comm-text);">Коммуникация</span>
+  <span class="legend-item" style="background:var(--habit-bg);color:var(--habit-text);">Новые практики</span>
+</div>
+
+<div class="grid-wrapper">
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="nav">
+  <a href="week1.html">Неделя 1</a>
+  <a href="week2.html">Неделя 2</a>
+  <a href="week3.html" class="active">Неделя 3</a>
+</div>
+
+<div class="bingo-alert" id="bingoAlert">
+  <div class="bingo-msg">
+    <h2>🎉 БИНГО!</h2>
+    <p>Вы собрали линию! Отличная работа!</p>
+    <button onclick="document.getElementById('bingoAlert').classList.remove('show')">Ура!</button>
+  </div>
+</div>
+
+<div id="saveHint" class="save-hint" style="display:none">
+  💾 Добавьте эту страницу в закладки, чтобы сохранить прогресс
+</div>
+
+<footer class="footer">
+  Нажимайте на задание, чтобы отметить выполнение<br>
+  <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">Created with Perplexity Computer</a>
+</footer>
+
+<script>
+const WEEK = 3;
+// Unlock date: April 13, 2026 00:00 Moscow time (UTC+3)
+const UNLOCK_DATE = new Date('2026-04-13T00:00:00+03:00');
+const UNLOCK_DISPLAY = '13 апреля';
+
+const catNames = ['СПОРТ', 'ФОТО', 'ПОРЯДОК', 'КОММУНИКАЦИЯ', 'НОВЫЕ ПРАКТИКИ'];
+const catClasses = ['cat-sport', 'cat-photo', 'cat-order', 'cat-comm', 'cat-habit'];
+
+const latinSquare = [
+  [0,1,2,3,4],
+  [2,3,4,0,1],
+  [4,0,1,2,3],
+  [1,2,3,4,0],
+  [3,4,0,1,2]
+];
+
+const tasks = {
+  0: ["Пройти за 1 день 15\u00A0000 шагов", "50 приседаний + планка 1 мин", "100 приседаний", "Отжимания / пресс на выбор 40 раз", "3 упражнения на баланс"],
+  1: ["Моё уютное рабочее место", "Моя домашняя библиотека", "Узор из природных материалов", "Рассвет и закат 1 дня", "Угадай город/страну/место по фото"],
+  2: ["Написать 3 благодарности за день", "Разбери личную эл. почту", "Список из 10 пунктов \u00abЧто делает меня счастливым\u00bb", "Распечатай памятные фото и вклей в альбом", "С 21:00 до 09:00 — часы тишины (2 дня)"],
+  3: ["Утренний кофе с коллегой", "Загадай загадку в общем чате", "Задай открытый вопрос / попроси совета в чате", "3 звонка за 1 день, по 5+ мин каждый", "Созвон с 2+ коллегами с камерами"],
+  4: ["5 минут медитации", "Представь спокойное место и побудь там мысленно 2 мин", "Завтрак/обед/ужин — без экранов", "Моменты для души (рукоделие, творчество)", "Подведи итоги недели. Запиши результаты."]
+};
+
+// Spring emoji icons for locked cells — randomized per cell
+const springIcons = ['🌸', '🌷', '🌻', '🌼', '🍀', '🌿', '☘️', '🦋', '🐝', '🌱', '🌺', '💐', '🪻', '🌾', '🪴', '🐞', '🕊️', '☀️', '🌈', '🍃', '🌳', '🪷', '🌵', '🦜', '🫧'];
+
+const isUnlocked = new Date() >= UNLOCK_DATE;
+
+function loadState() {
+  const hash = window.location.hash.slice(1);
+  const bits = hash ? parseInt(hash, 36) : 0;
+  return Array.from({length: 25}, (_, i) => !!(bits & (1 << i)));
+}
+
+function saveState(st) {
+  let bits = 0;
+  st.forEach((v, i) => { if (v) bits |= (1 << i); });
+  history.replaceState(null, '', '#' + bits.toString(36));
+  updateSaveHint(st);
+}
+
+function updateSaveHint(st) {
+  const el = document.getElementById('saveHint');
+  if (el) el.style.display = st.some(Boolean) ? 'block' : 'none';
+}
+
+let state = loadState();
+const grid = document.getElementById('grid');
+const catIdx = [0,0,0,0,0];
+let prevBingoCount = 0;
+
+for (let r = 0; r < 5; r++) {
+  for (let c = 0; c < 5; c++) {
+    const catId = latinSquare[r][c];
+    const ti = catIdx[catId]++;
+    const idx = r * 5 + c;
+    const cell = document.createElement('div');
+
+    if (!isUnlocked) {
+      // Locked cell
+      cell.className = 'cell locked';
+      cell.innerHTML =
+        '<div class="lock-content">' +
+          '<div class="lock-icon">' + springIcons[idx] + '</div>' +
+          '<div class="lock-date">Доступно<br>с ' + UNLOCK_DISPLAY + '</div>' +
+        '</div>';
+    } else {
+      // Unlocked cell
+      cell.className = 'cell ' + catClasses[catId] + (state[idx] ? ' done' : '');
+      cell.dataset.idx = idx;
+      cell.innerHTML =
+        '<div class="cell-cat">' + catNames[catId] + '</div>' +
+        '<div class="cell-sep"></div>' +
+        '<div class="cell-text">' + tasks[catId][ti] + '</div>' +
+        '<div class="cell-check">' + (state[idx] ? '✓' : '') + '</div>';
+
+      cell.addEventListener('click', function() {
+        const i = parseInt(this.dataset.idx);
+        state[i] = !state[i];
+        this.classList.toggle('done');
+        this.querySelector('.cell-check').textContent = state[i] ? '✓' : '';
+        saveState(state);
+        updateProgress();
+        checkBingo();
+      });
+    }
+    grid.appendChild(cell);
+  }
+}
+
+function updateProgress() {
+  if (!isUnlocked) return;
+  const done = state.filter(Boolean).length;
+  document.getElementById('progressFill').style.width = (done / 25 * 100) + '%';
+  document.getElementById('progressText').textContent = done + ' / 25';
+}
+
+function checkBingo() {
+  let count = 0;
+  for (let r = 0; r < 5; r++) { if (state.slice(r*5, r*5+5).every(Boolean)) count++; }
+  for (let c2 = 0; c2 < 5; c2++) { if ([0,1,2,3,4].every(r => state[r*5+c2])) count++; }
+  if ([0,6,12,18,24].every(i => state[i])) count++;
+  if ([4,8,12,16,20].every(i => state[i])) count++;
+  if (count > prevBingoCount) { document.getElementById('bingoAlert').classList.add('show'); }
+  prevBingoCount = count;
+}
+
+updateProgress();
+if (isUnlocked) {
+  (function(){
+    let c2 = 0;
+    for (let r = 0; r < 5; r++) if (state.slice(r*5,r*5+5).every(Boolean)) c2++;
+    for (let col = 0; col < 5; col++) if ([0,1,2,3,4].every(r => state[r*5+col])) c2++;
+    if ([0,6,12,18,24].every(i => state[i])) c2++;
+    if ([4,8,12,16,20].every(i => state[i])) c2++;
+    prevBingoCount = c2;
+  })();
+}
+
+window.addEventListener('hashchange', function() {
+  if (!isUnlocked) return;
+  state = loadState();
+  document.querySelectorAll('.cell:not(.locked)').forEach(cell => {
+    const i = parseInt(cell.dataset.idx);
+    cell.classList.toggle('done', state[i]);
+    cell.querySelector('.cell-check').textContent = state[i] ? '✓' : '';
+  });
+  updateProgress();
+});
+</script>
+</body>
+</html>
