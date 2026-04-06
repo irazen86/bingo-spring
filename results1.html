@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Бинго «Весеннее обновление» — Итоги недели 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #e8f5e9 0%, #f3e5f5 50%, #e3f2fd 100%);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* Шапка */
+  .header {
+    background: white;
+    border-radius: 24px;
+    padding: 28px 32px 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    text-align: center;
+    border: 2px solid #a5d6a7;
+  }
+
+  .header-tag {
+    display: inline-block;
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+    border: 1.5px solid #a5d6a7;
+  }
+
+  .header h1 {
+    font-size: 26px;
+    font-weight: 900;
+    color: #1b5e20;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .header .dates {
+    font-size: 15px;
+    color: #66bb6a;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    font-size: 13px;
+    color: #555;
+  }
+
+  .legend-item {
+    background: #f5f5f5;
+    border-radius: 10px;
+    padding: 4px 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Подиум топ-3 */
+  .podium {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 0 8px;
+  }
+
+  .podium-item {
+    flex: 1;
+    max-width: 200px;
+    text-align: center;
+    position: relative;
+  }
+
+  .podium-card {
+    background: white;
+    border-radius: 20px;
+    padding: 18px 12px 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+    position: relative;
+    transition: transform 0.2s;
+  }
+  .podium-card:hover { transform: translateY(-3px); }
+
+  .podium-1 .podium-card { border: 2.5px solid #fdd835; background: #fffde7; }
+  .podium-2 .podium-card { border: 2.5px solid #b0bec5; background: #f8f9fa; }
+  .podium-3 .podium-card { border: 2.5px solid #ff8a65; background: #fff3e0; }
+
+  .rank-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 900;
+    margin: 0 auto 10px;
+  }
+  .podium-1 .rank-badge { background: #fdd835; color: #7c6200; font-size: 22px; }
+  .podium-2 .rank-badge { background: #b0bec5; color: #37474f; font-size: 20px; }
+  .podium-3 .rank-badge { background: #ff8a65; color: #bf360c; }
+
+  .podium-name {
+    font-size: 14px;
+    font-weight: 800;
+    color: #1a1a1a;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .podium-score {
+    font-size: 28px;
+    font-weight: 900;
+    color: #2e7d32;
+  }
+  .podium-1 .podium-score { font-size: 32px; }
+
+  .podium-sub {
+    font-size: 11px;
+    color: #888;
+    margin-top: 2px;
+  }
+
+  .blackout-crown {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  }
+
+  .blackout-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #7b1fa2, #e040fb);
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 10px;
+    letter-spacing: 0.05em;
+    margin-top: 4px;
+  }
+
+  /* Основная таблица */
+  .table-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 2px solid #e0e0e0;
+  }
+
+  .table-title {
+    background: #f1f8e9;
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #2e7d32;
+    border-bottom: 2px solid #dcedc8;
+    letter-spacing: 0.02em;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid #f5f5f5;
+    transition: background 0.15s;
+    gap: 12px;
+  }
+  .row:last-child { border-bottom: none; }
+  .row:hover { background: #fafafa; }
+
+  .row.blackout-row {
+    background: linear-gradient(to right, #fce4ec, #fff);
+    border-left: 4px solid #e040fb;
+  }
+  .row.blackout-row:hover { background: linear-gradient(to right, #f8bbd0, #fff); }
+
+  .row-rank {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+    color: #757575;
+    flex-shrink: 0;
+  }
+  .row-rank.top3 { background: #fff9c4; color: #f57f17; }
+
+  .row-name {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+
+  .row-meta {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+  .badge-star { background: #fff8e1; color: #f57f17; border: 1px solid #ffe082; }
+  .badge-lines { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
+  .badge-blackout { background: linear-gradient(135deg,#7b1fa2,#e040fb); color: white; }
+
+  .row-score {
+    font-size: 20px;
+    font-weight: 900;
+    color: #2e7d32;
+    min-width: 42px;
+    text-align: right;
+  }
+
+  .score-unit {
+    font-size: 11px;
+    color: #aaa;
+    font-weight: 600;
+  }
+
+  /* Бар прогресса */
+  .bar-wrap {
+    width: 100%;
+    height: 4px;
+    background: #f0f0f0;
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(to right, #66bb6a, #2e7d32);
+    transition: width 0.6s ease;
+  }
+  .blackout-row .bar-fill { background: linear-gradient(to right, #e040fb, #7b1fa2); }
+
+  .row-inner {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Подвал */
+  .footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 13px;
+    color: #9e9e9e;
+    font-weight: 600;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .nav-link {
+    display: inline-block;
+    background: white;
+    color: #2e7d32;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: 2px solid #a5d6a7;
+    transition: all 0.2s;
+  }
+  .nav-link:hover { background: #e8f5e9; }
+
+  @media (max-width: 480px) {
+    .header h1 { font-size: 21px; }
+    .podium-score { font-size: 24px; }
+    .podium-1 .podium-score { font-size: 28px; }
+    .row-name { font-size: 14px; }
+    .row-score { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Шапка -->
+  <div class="header">
+    <div class="header-tag">Промежуточные итоги</div>
+    <h1>Бинго «Весеннее обновление»</h1>
+    <div class="dates">Неделя 1 · 30 марта — 5 апреля 2026</div>
+    <div class="legend">
+      <div class="legend-item">⭐ звёздочка = +5 баллов</div>
+      <div class="legend-item">📐 линия = +2 балла</div>
+      <div class="legend-item">💥 блэкаут = +10 баллов</div>
+    </div>
+  </div>
+
+  <!-- Подиум топ-3 -->
+  <div class="podium">
+    <!-- 2-е место -->
+    <div class="podium-item podium-2">
+      <div class="podium-card">
+        <div class="blackout-crown">💥</div>
+        <div class="rank-badge">2</div>
+        <div class="podium-name">Лена Невзорова</div>
+        <div class="podium-score">59</div>
+        <div class="podium-sub">баллов</div>
+        <div class="blackout-badge">БЛЭКАУТ</div>
+      </div>
+    </div>
+    <!-- 1-е место -->
+    <div class="podium-item podium-1">
+      <div class="podium-card">
+        <div class="blackout-crown">💥</div>
+        <div class="rank-badge">🥇</div>
+        <div class="podium-name">Ира Шинкоренко</div>
+        <div class="podium-score">64</div>
+        <div class="podium-sub">балла</div>
+        <div class="blackout-badge">БЛЭКАУТ + ⭐</div>
+      </div>
+    </div>
+    <!-- 3-е место -->
+    <div class="podium-item podium-3">
+      <div class="podium-card">
+        <div class="rank-badge">3</div>
+        <div class="podium-name">Наташа Сивоконь</div>
+        <div class="podium-score">44</div>
+        <div class="podium-sub">балла</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Полная таблица -->
+  <div class="table-card">
+    <div class="table-title">Все участники · по убыванию баллов</div>
+
+    <script>
+    const MAX_SCORE = 64;
+    const players = [
+      { rank:1,  name:"Ира Шинкоренко",   score:64, tasks:25, star:true,  lines:12, blackout:true  },
+      { rank:2,  name:"Лена Невзорова",    score:59, tasks:25, star:false, lines:12, blackout:true  },
+      { rank:3,  name:"Наташа Сивоконь",   score:44, tasks:24, star:false, lines:10, blackout:false },
+      { rank:4,  name:"Оля Куянцева",      score:37, tasks:23, star:false, lines:7,  blackout:false },
+      { rank:5,  name:"Наташа Антюхова",   score:36, tasks:22, star:false, lines:7,  blackout:false },
+      { rank:6,  name:"Света Молчанова",   score:34, tasks:22, star:false, lines:6,  blackout:false },
+      { rank:7,  name:"Женя Чепикова",     score:34, tasks:22, star:false, lines:6,  blackout:false },
+      { rank:8,  name:"Саша Новикова",     score:34, tasks:22, star:false, lines:6,  blackout:false },
+      { rank:9,  name:"Юля Пугачева",      score:33, tasks:21, star:false, lines:6,  blackout:false },
+      { rank:10, name:"Даша Учаева",       score:32, tasks:22, star:false, lines:5,  blackout:false },
+      { rank:11, name:"Марина Рубанистая", score:27, tasks:19, star:false, lines:4,  blackout:false },
+      { rank:12, name:"Ира Болуж",         score:26, tasks:20, star:false, lines:3,  blackout:false },
+      { rank:13, name:"Аня Распутина",     score:26, tasks:20, star:false, lines:3,  blackout:false },
+      { rank:14, name:"Аня Рахматуллина",  score:22, tasks:18, star:false, lines:2,  blackout:false },
+      { rank:15, name:"Юля Стяжкина",      score:17, tasks:15, star:false, lines:1,  blackout:false },
+      { rank:16, name:"Боря Зенков",       score:16, tasks:14, star:false, lines:1,  blackout:false },
+      { rank:17, name:"Настя Карпова",     score:16, tasks:14, star:false, lines:1,  blackout:false },
+      { rank:18, name:"Толя Иванов",       score:14, tasks:14, star:false, lines:0,  blackout:false },
+      { rank:19, name:"Катя Москальчук",   score:11, tasks:11, star:false, lines:0,  blackout:false },
+      { rank:20, name:"Ксюша Бабий",       score:10, tasks:10, star:false, lines:0,  blackout:false },
+      { rank:21, name:"Наташа Антонова",   score:9,  tasks:4,  star:true,  lines:0,  blackout:false },
+      { rank:22, name:"Дима Козлов",       score:8,  tasks:8,  star:false, lines:0,  blackout:false },
+      { rank:23, name:"Миша Елшин",        score:5,  tasks:5,  star:false, lines:0,  blackout:false },
+      { rank:24, name:"Илья Антонов",      score:4,  tasks:4,  star:false, lines:0,  blackout:false },
+    ];
+
+    players.forEach(p => {
+      const isBlackout = p.blackout;
+      const isTop3 = p.rank <= 3;
+      const pct = Math.round((p.score / MAX_SCORE) * 100);
+
+      const badges = [];
+      if (p.blackout) badges.push('<span class="badge badge-blackout">💥 Блэкаут</span>');
+      if (p.star) badges.push('<span class="badge badge-star">⭐ Звёздочка</span>');
+      if (p.lines > 0) badges.push(`<span class="badge badge-lines">📐 ${p.lines} ${p.lines===1?'линия':p.lines<5?'линии':'линий'}</span>`);
+
+      document.write(`
+        <div class="row${isBlackout?' blackout-row':''}">
+          <div class="row-rank${isTop3?' top3':''}">${p.rank}</div>
+          <div class="row-inner">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <div class="row-name">${p.name}</div>
+              <div class="row-meta">${badges.join('')}</div>
+            </div>
+            <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%"></div></div>
+          </div>
+          <div>
+            <div class="row-score">${p.score}</div>
+            <div class="score-unit" style="text-align:right">${p.tasks}/25 зад.</div>
+          </div>
+        </div>
+      `);
+    });
+    </script>
+  </div>
+
+  <!-- Навигация -->
+  <div style="margin-top: 24px;">
+    <div class="nav-links">
+      <a href="week1.html" class="nav-link">📋 Карточка недели 1</a>
+      <a href="week2.html" class="nav-link">📋 Карточка недели 2</a>
+      <a href="week3.html" class="nav-link">📋 Карточка недели 3</a>
+    </div>
+    <div class="footer">Бинго «Весеннее обновление» · Апрель 2026</div>
+  </div>
+
+</div>
+</body>
+</html>
