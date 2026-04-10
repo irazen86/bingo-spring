@@ -422,7 +422,8 @@ function updateScore() {
   const done = state.filter(Boolean).length;
   const lines = countLines();
   const starPts = starDone ? 5 : 0;
-  const score = done + lines * 2 + starPts;
+  const blackout = done === 25 ? 10 : 0;
+  const score = done + lines * 2 + starPts + blackout;
 
   document.getElementById('scoreNum').textContent = score;
 
@@ -430,6 +431,7 @@ function updateScore() {
   if (done > 0) parts.push(done + ' зад. ×1');
   if (lines > 0) parts.push(lines + ' лин. ×2');
   if (starPts > 0) parts.push('⭐ ×5');
+  if (blackout > 0) parts.push('💥 блэкаут +10');
   document.getElementById('scoreDetail').innerHTML = parts.length ? parts.join(' · ') : '&nbsp;';
 }
 

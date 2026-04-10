@@ -262,8 +262,8 @@ https://www.perplexity.ai/computer
 <script>
 const WEEK = 3;
 // Unlock date: April 13, 2026 00:00 Moscow time (UTC+3)
-const UNLOCK_DATE = new Date('2026-04-13T00:00:00+03:00');
-const UNLOCK_DISPLAY = '13 апреля';
+const UNLOCK_DATE = new Date('2026-04-13T07:00:00+03:00');
+const UNLOCK_DISPLAY = '13 апреля в 07:00';
 
 const catNames = ['СПОРТ', 'ФОТО', 'ПОРЯДОК', 'КОММУНИКАЦИЯ', 'НОВЫЕ ПРАКТИКИ'];
 const catClasses = ['cat-sport', 'cat-photo', 'cat-order', 'cat-comm', 'cat-habit'];
@@ -422,7 +422,8 @@ function updateScore() {
   const done = state.filter(Boolean).length;
   const lines = countLines();
   const starPts = starDone ? 5 : 0;
-  const score = done + lines * 2 + starPts;
+  const blackout = done === 25 ? 10 : 0;
+  const score = done + lines * 2 + starPts + blackout;
 
   document.getElementById('scoreNum').textContent = score;
 
@@ -430,6 +431,7 @@ function updateScore() {
   if (done > 0) parts.push(done + ' зад. ×1');
   if (lines > 0) parts.push(lines + ' лин. ×2');
   if (starPts > 0) parts.push('⭐ ×5');
+  if (blackout > 0) parts.push('💥 блэкаут +10');
   document.getElementById('scoreDetail').innerHTML = parts.length ? parts.join(' · ') : '&nbsp;';
 }
 
