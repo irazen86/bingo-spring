@@ -10,7 +10,7 @@
                |_|                      |___/
   ____                            _
  / ___|___  _ __ ___  _ __  _   _| |_ ___ _ __
-| |   / _ \| '_ ` _ \| '_ \| | | | __/ _ \ '__|
+| |   / _ \| '_ ` _ \| '_ \| | | | __/ _ \ '__
 | |__| (_) | | | | | | |_) | |_| | ||  __/ |
  \____\___/|_| |_| |_| .__/ \__,_|\__\___|_|
                       |_|
@@ -54,7 +54,6 @@ https://www.perplexity.ai/computer
 
   .progress-bar { background: #E0E0E0; border-radius: 20px; height: 8px; margin: 10px auto 6px; max-width: 300px; overflow: hidden; }
   .progress-fill { height: 100%; background: linear-gradient(90deg, #4CAF50, #8BC34A); border-radius: 20px; transition: width 0.4s ease; width: 0%; }
-  .progress-text { text-align: center; font-size: 12px; color: #888; font-weight: 600; margin-bottom: 12px; }
 
   .legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 12px; }
   .legend-item { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 12px; white-space: nowrap; }
@@ -144,7 +143,6 @@ https://www.perplexity.ai/computer
   }
   @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-  /* Locked overlay for entire grid */
   .grid-wrapper { position: relative; max-width: 600px; margin: 0 auto; }
 
   .save-hint {
@@ -168,13 +166,13 @@ https://www.perplexity.ai/computer
     .cell.locked .lock-date { font-size: 10px; }
   }
 
-  /* ── Score display ─────────────────────────────────── */
+  /* Score display */
   .score-box { text-align: center; margin: 4px auto 8px; }
   .score-num { font-size: 40px; font-weight: 900; color: #2E7D32; line-height: 1; }
   .score-lbl { font-size: 10px; color: #bbb; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
   .score-detail { font-size: 11px; color: #999; margin-top: 3px; min-height: 16px; font-weight: 600; }
 
-  /* ── Star task ─────────────────────────────────────── */
+  /* Star task */
   .star-block {
     max-width: 600px; margin: 10px auto 0;
     background: #fffde7; border: 2.5px solid #ffd54f;
@@ -225,12 +223,11 @@ https://www.perplexity.ai/computer
   <div class="grid" id="grid"></div>
 </div>
 
-
 <div class="star-block" id="starBlock">
   <div class="star-icon">⭐</div>
   <div class="star-body">
     <div class="star-tag">Задание со звёздочкой</div>
-    <div class="star-text">Проходить 10 000 шагов каждый день</div>
+    <div class="star-text">Проходить 10 000 шагов каждый день</div>
     <div class="star-pts">+5 баллов за выполнение всю неделю</div>
   </div>
   <div class="star-check" id="starCheck"></div>
@@ -261,7 +258,6 @@ https://www.perplexity.ai/computer
 
 <script>
 const WEEK = 1;
-// Unlock date: March 30, 2026 00:00 Moscow time (UTC+3)
 const UNLOCK_DATE = new Date('2026-03-30T00:00:00+03:00');
 const UNLOCK_DISPLAY = '30 марта';
 
@@ -277,35 +273,101 @@ const latinSquare = [
 ];
 
 const tasks = {
-  0: ["Разминка плечевого пояса 20 мин", "Новая физ. активность на выбор 15 мин", "Пройти за день 5\u00A0000 шагов", "Качаем пресс 30 раз", "Упражнение «Вакуум» 10 раз"],
+  0: ["Разминка плечевого пояса 20 мин", "Новая физ. активность на выбор (любая) 15 мин", "Пройти за день 5 000 шагов", "Качаем пресс 30 раз", "Упражнение «Вакуум» 10 раз"],
   1: ["Весна вокруг", "Кофе-пауза (фото чашки с любимым напитком)", "Небо надо мной", "«Зелёное» фото", "Домашний питомец (даже если не свой)"],
   2: ["Отпишись от 5 ненужных каналов/рассылок", "Удали 100 ненужных фото/видео в телефоне", "Поставь себе 3 цели на апрель", "Наведи порядок в домашней аптечке", "Убери, наконец, зимние вещи"],
-  3: ["Созвонись с коллегой на нерабочие темы 15 мин", "Узнай по 1 новому факту о 3-х коллегах", "Поделись в чате мемом / чем-то смешным", "Поделись рекомендацией (книга/фильм/игра)", "Поделись настроением — запиши кружочек"],
-  4: ["Лечь спать до 23:00", "Попробовать технику «помодоро» на весь день", "Мягкие наклоны вперёд и назад (по 5 раз)", "Прогулка в обеденный перерыв 20 мин", "Пересмотри вебинар про витамины на портале"]
+  3: ["Созвонись на нерабочие темы на 15 мин с коллегой", "Узнай по 1 новому факту о 3-х коллегах", "Поделиться в чате мемом/чем-то смешным", "Поделись в чате любой рекомендацией (книга/фильм/игра и т.п.)", "Поделись настроением — запиши кружочек"],
+  4: ["Лечь спать до 23:00", "Попробовать технику «Помодоро» на весь рабочий день", "Встать прямо и сделать мягкие наклоны вперёд и назад (по 5 раз)", "Прогулка в обеденный перерыв 20 мин", "Пересмотри вебинар про минералы и витамины на портале"],
 };
 
-// Spring emoji icons for locked cells — randomized per cell
-const springIcons = ['🌸', '🌷', '🌻', '🌼', '🍀', '🌿', '☘️', '🦋', '🐝', '🌱', '🌺', '💐', '🪻', '🌾', '🪴', '🐞', '🕊️', '☀️', '🌈', '🍃', '🌳', '🪷', '🌵', '🦜', '🫧'];
+const springIcons = ['🌸','🌷','🌻','🌼','🍀','🌿','☘️','🦋','🐝','🌱','🌺','💐','🪻','🌾','🪴','🐞','🕊️','☀️','🌈','🍃','🌳','🪷','🌵','🦜','🫧'];
 
 const isUnlocked = new Date() >= UNLOCK_DATE;
 
+// ── State: URL hash, 26 bits (0–24 = tasks, 25 = star) ─────────────
 function loadState() {
   const hash = window.location.hash.slice(1);
   const bits = hash ? parseInt(hash, 36) : 0;
   return Array.from({length: 25}, (_, i) => !!(bits & (1 << i)));
 }
 
-// saveState replaced below
+function loadStar() {
+  const hash = window.location.hash.slice(1);
+  const bits = hash ? parseInt(hash, 36) : 0;
+  return !!(bits & (1 << 25));
+}
+
+function saveState(st, star) {
+  let bits = 0;
+  st.forEach((v, i) => { if (v) bits |= (1 << i); });
+  if (star) bits |= (1 << 25);
+  history.replaceState(null, '', '#' + bits.toString(36));
+  updateSaveHint(st);
+}
 
 function updateSaveHint(st) {
   const el = document.getElementById('saveHint');
   if (el) el.style.display = st.some(Boolean) ? 'block' : 'none';
 }
 
-let state = loadState();
-const grid = document.getElementById('grid');
-const catIdx = [0,0,0,0,0];
+// ── Count completed lines (rows, cols, diagonals) ────────────────────
+function countLines() {
+  let n = 0;
+  for (let r = 0; r < 5; r++) {
+    if (state.slice(r*5, r*5+5).every(Boolean)) n++;
+  }
+  for (let c = 0; c < 5; c++) {
+    if ([0,1,2,3,4].every(r => state[r*5+c])) n++;
+  }
+  if ([0,6,12,18,24].every(i => state[i])) n++;
+  if ([4,8,12,16,20].every(i => state[i])) n++;
+  return n;
+}
+
+// ── Score calculation ────────────────────────────────────────────────
+function updateScore() {
+  if (!isUnlocked) return;
+  const done = state.filter(Boolean).length;
+  const lines = countLines();
+  const starPts = starDone ? 5 : 0;
+  const blackout = done === 25 ? 10 : 0;
+  const score = done + lines * 2 + starPts + blackout;
+
+  document.getElementById('scoreNum').textContent = score;
+
+  const parts = [];
+  if (done > 0) parts.push(done + ' зад. ×1');
+  if (lines > 0) parts.push(lines + ' лин. ×2');
+  if (starPts > 0) parts.push('⭐ ×5');
+  if (blackout > 0) parts.push('💥 блэкаут +10');
+  document.getElementById('scoreDetail').innerHTML = parts.length ? parts.join(' · ') : '&nbsp;';
+}
+
+// ── Progress bar ─────────────────────────────────────────────────────
+function updateProgress() {
+  if (!isUnlocked) return;
+  const done = state.filter(Boolean).length;
+  document.getElementById('progressFill').style.width = (done / 25 * 100) + '%';
+  updateScore();
+}
+
+// ── Bingo detection ──────────────────────────────────────────────────
 let prevBingoCount = 0;
+
+function checkBingo() {
+  const count = countLines();
+  if (count > prevBingoCount) {
+    document.getElementById('bingoAlert').classList.add('show');
+  }
+  prevBingoCount = count;
+}
+
+// ── Build grid ───────────────────────────────────────────────────────
+let state = loadState();
+let starDone = isUnlocked ? loadStar() : false;
+
+const gridEl = document.getElementById('grid');
+const catIdx = [0,0,0,0,0];
 
 for (let r = 0; r < 5; r++) {
   for (let c = 0; c < 5; c++) {
@@ -315,7 +377,6 @@ for (let r = 0; r < 5; r++) {
     const cell = document.createElement('div');
 
     if (!isUnlocked) {
-      // Locked cell
       cell.className = 'cell locked';
       cell.innerHTML =
         '<div class="lock-content">' +
@@ -323,7 +384,6 @@ for (let r = 0; r < 5; r++) {
           '<div class="lock-date">Доступно<br>с ' + UNLOCK_DISPLAY + '</div>' +
         '</div>';
     } else {
-      // Unlocked cell
       cell.className = 'cell ' + catClasses[catId] + (state[idx] ? ' done' : '');
       cell.dataset.idx = idx;
       cell.innerHTML =
@@ -342,104 +402,18 @@ for (let r = 0; r < 5; r++) {
         checkBingo();
       });
     }
-    grid.appendChild(cell);
+    gridEl.appendChild(cell);
   }
 }
 
-function updateProgress() {
-  if (!isUnlocked) return;
-  const done = state.filter(Boolean).length;
-  document.getElementById('progressFill').style.width = (done / 25 * 100) + '%';
-  updateScore();
-}
-
-function checkBingo() {
-  const count = countLines();
-  if (count > prevBingoCount) { document.getElementById('bingoAlert').classList.add('show'); }
-  prevBingoCount = count;
-}
-  for (let c2 = 0; c2 < 5; c2++) { if ([0,1,2,3,4].every(r => state[r*5+c2])) count++; }
-  if ([0,6,12,18,24].every(i => state[i])) count++;
-  if ([4,8,12,16,20].every(i => state[i])) count++;
-  if (count > prevBingoCount) { document.getElementById('bingoAlert').classList.add('show'); }
-  prevBingoCount = count;
-}
-
-updateProgress();
-if (isUnlocked) {
-  (function(){
-    prevBingoCount = countLines();
-  })();
-}
-
-window.addEventListener('hashchange', function() {
-  if (!isUnlocked) return;
-  state = loadState();
-  starDone = loadStar();
-  if (document.getElementById('starBlock')) {
-    document.getElementById('starBlock').classList.toggle('done', starDone);
-    document.getElementById('starCheck').textContent = starDone ? '✓' : '';
-  }
-  document.querySelectorAll('.cell:not(.locked)').forEach(cell => {
-    const i = parseInt(cell.dataset.idx);
-    cell.classList.toggle('done', state[i]);
-    cell.querySelector('.cell-check').textContent = state[i] ? '✓' : '';
-  });
-  updateProgress();
-});
-
-// ── Star task ────────────────────────────────────────────────────
-function loadStar() {
-  const hash = window.location.hash.slice(1);
-  const bits = hash ? parseInt(hash, 36) : 0;
-  return !!(bits & (1 << 25));
-}
-
-let starDone = isUnlocked ? loadStar() : false;
-
-// ── Updated saveState (includes star bit 25) ─────────────────────
-function saveState(st, star) {
-  let bits = 0;
-  st.forEach((v, i) => { if (v) bits |= (1 << i); });
-  if (star) bits |= (1 << 25);
-  history.replaceState(null, '', '#' + bits.toString(36));
-  updateSaveHint(st);
-}
-
-// ── Count completed lines ────────────────────────────────────────
-function countLines() {
-  let n = 0;
-  for (let r = 0; r < 5; r++) { if (state.slice(r*5, r*5+5).every(Boolean)) n++; }
-  for (let c = 0; c < 5; c++) { if ([0,1,2,3,4].every(r => state[r*5+c])) n++; }
-  if ([0,6,12,18,24].every(i => state[i])) n++;
-  if ([4,8,12,16,20].every(i => state[i])) n++;
-  return n;
-}
-
-// ── Update score display ─────────────────────────────────────────
-function updateScore() {
-  if (!isUnlocked) return;
-  const done = state.filter(Boolean).length;
-  const lines = countLines();
-  const starPts = starDone ? 5 : 0;
-  const blackout = done === 25 ? 10 : 0;
-  const score = done + lines * 2 + starPts + blackout;
-
-  document.getElementById('scoreNum').textContent = score;
-
-  const parts = [];
-  if (done > 0) parts.push(done + ' зад. ×1');
-  if (lines > 0) parts.push(lines + ' лин. ×2');
-  if (starPts > 0) parts.push('⭐ ×5');
-  if (blackout > 0) parts.push('💥 блэкаут +10');
-  document.getElementById('scoreDetail').innerHTML = parts.length ? parts.join(' · ') : '&nbsp;';
-}
-
-// ── Star task interactivity ──────────────────────────────────────
+// ── Star task ────────────────────────────────────────────────────────
 if (isUnlocked) {
   const starBlock = document.getElementById('starBlock');
   const starCheck = document.getElementById('starCheck');
-  if (starDone) { starBlock.classList.add('done'); starCheck.textContent = '✓'; }
+  if (starDone) {
+    starBlock.classList.add('done');
+    starCheck.textContent = '✓';
+  }
   starBlock.addEventListener('click', function() {
     starDone = !starDone;
     this.classList.toggle('done');
@@ -449,6 +423,32 @@ if (isUnlocked) {
   });
 } else {
   document.getElementById('starBlock').classList.add('locked-star');
+}
+
+// ── hashchange (sharing progress via URL) ────────────────────────────
+window.addEventListener('hashchange', function() {
+  if (!isUnlocked) return;
+  state = loadState();
+  starDone = loadStar();
+  const starBlock = document.getElementById('starBlock');
+  const starCheck = document.getElementById('starCheck');
+  if (starBlock) {
+    starBlock.classList.toggle('done', starDone);
+    starCheck.textContent = starDone ? '✓' : '';
+  }
+  document.querySelectorAll('.cell:not(.locked)').forEach(cell => {
+    const i = parseInt(cell.dataset.idx);
+    cell.classList.toggle('done', state[i]);
+    cell.querySelector('.cell-check').textContent = state[i] ? '✓' : '';
+  });
+  prevBingoCount = countLines();
+  updateProgress();
+});
+
+// ── Init ─────────────────────────────────────────────────────────────
+updateProgress();
+if (isUnlocked) {
+  prevBingoCount = countLines();
 }
 </script>
 </body>
