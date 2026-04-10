@@ -167,6 +167,36 @@ https://www.perplexity.ai/computer
     .cell.locked .lock-icon { font-size: 30px; }
     .cell.locked .lock-date { font-size: 10px; }
   }
+
+  /* ── Score display ─────────────────────────────────── */
+  .score-box { text-align: center; margin: 4px auto 8px; }
+  .score-num { font-size: 40px; font-weight: 900; color: #2E7D32; line-height: 1; }
+  .score-lbl { font-size: 10px; color: #bbb; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+  .score-detail { font-size: 11px; color: #999; margin-top: 3px; min-height: 16px; font-weight: 600; }
+
+  /* ── Star task ─────────────────────────────────────── */
+  .star-block {
+    max-width: 600px; margin: 10px auto 0;
+    background: #fffde7; border: 2.5px solid #ffd54f;
+    border-radius: 14px; padding: 10px 14px;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer; transition: transform 0.15s, opacity 0.15s;
+    user-select: none; -webkit-user-select: none;
+  }
+  .star-block:active { transform: scale(0.97); }
+  .star-block.done { opacity: 0.7; }
+  .star-block.locked-star { opacity: 0.5; cursor: default; }
+  .star-icon { font-size: 24px; flex-shrink: 0; }
+  .star-body { flex: 1; min-width: 0; }
+  .star-tag { font-size: 9px; font-weight: 800; color: #f57f17; text-transform: uppercase; letter-spacing: 0.5px; }
+  .star-text { font-size: 12px; font-weight: 700; color: #333; margin-top: 2px; line-height: 1.3; }
+  .star-pts { font-size: 10px; color: #f9a825; font-weight: 700; margin-top: 2px; }
+  .star-check {
+    width: 26px; height: 26px; border: 2.5px solid #ffd54f;
+    border-radius: 6px; display: flex; align-items: center;
+    justify-content: center; font-size: 15px; transition: all 0.2s; flex-shrink: 0;
+  }
+  .star-block.done .star-check { background: #fdd835; border-color: #fdd835; color: white; }
 </style>
 </head>
 <body>
@@ -177,7 +207,11 @@ https://www.perplexity.ai/computer
 </div>
 
 <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-<div class="progress-text" id="progressText">0 / 25</div>
+<div class="score-box">
+  <div class="score-num" id="scoreNum">0</div>
+  <div class="score-lbl">баллов</div>
+  <div class="score-detail" id="scoreDetail">&nbsp;</div>
+</div>
 
 <div class="legend">
   <span class="legend-item" style="background:var(--sport-bg);color:var(--sport-text);">Спорт</span>
@@ -189,6 +223,17 @@ https://www.perplexity.ai/computer
 
 <div class="grid-wrapper">
   <div class="grid" id="grid"></div>
+</div>
+
+
+<div class="star-block" id="starBlock">
+  <div class="star-icon">⭐</div>
+  <div class="star-body">
+    <div class="star-tag">Задание со звёздочкой</div>
+    <div class="star-text">Делать фото дня каждый день</div>
+    <div class="star-pts">+5 баллов за выполнение всю неделю</div>
+  </div>
+  <div class="star-check" id="starCheck"></div>
 </div>
 
 <div class="nav">
@@ -250,12 +295,7 @@ function loadState() {
   return Array.from({length: 25}, (_, i) => !!(bits & (1 << i)));
 }
 
-function saveState(st) {
-  let bits = 0;
-  st.forEach((v, i) => { if (v) bits |= (1 << i); });
-  history.replaceState(null, '', '#' + bits.toString(36));
-  updateSaveHint(st);
-}
+// saveState replaced below
 
 function updateSaveHint(st) {
   const el = document.getElementById('saveHint');
@@ -297,7 +337,7 @@ for (let r = 0; r < 5; r++) {
         state[i] = !state[i];
         this.classList.toggle('done');
         this.querySelector('.cell-check').textContent = state[i] ? '✓' : '';
-        saveState(state);
+        saveState(state, starDone);
         updateProgress();
         checkBingo();
       });
@@ -310,12 +350,14 @@ function updateProgress() {
   if (!isUnlocked) return;
   const done = state.filter(Boolean).length;
   document.getElementById('progressFill').style.width = (done / 25 * 100) + '%';
-  document.getElementById('progressText').textContent = done + ' / 25';
+  updateScore();
 }
 
 function checkBingo() {
-  let count = 0;
-  for (let r = 0; r < 5; r++) { if (state.slice(r*5, r*5+5).every(Boolean)) count++; }
+  const count = countLines();
+  if (count > prevBingoCount) { document.getElementById('bingoAlert').classList.add('show'); }
+  prevBingoCount = count;
+}
   for (let c2 = 0; c2 < 5; c2++) { if ([0,1,2,3,4].every(r => state[r*5+c2])) count++; }
   if ([0,6,12,18,24].every(i => state[i])) count++;
   if ([4,8,12,16,20].every(i => state[i])) count++;
@@ -326,18 +368,18 @@ function checkBingo() {
 updateProgress();
 if (isUnlocked) {
   (function(){
-    let c2 = 0;
-    for (let r = 0; r < 5; r++) if (state.slice(r*5,r*5+5).every(Boolean)) c2++;
-    for (let col = 0; col < 5; col++) if ([0,1,2,3,4].every(r => state[r*5+col])) c2++;
-    if ([0,6,12,18,24].every(i => state[i])) c2++;
-    if ([4,8,12,16,20].every(i => state[i])) c2++;
-    prevBingoCount = c2;
+    prevBingoCount = countLines();
   })();
 }
 
 window.addEventListener('hashchange', function() {
   if (!isUnlocked) return;
   state = loadState();
+  starDone = loadStar();
+  if (document.getElementById('starBlock')) {
+    document.getElementById('starBlock').classList.toggle('done', starDone);
+    document.getElementById('starCheck').textContent = starDone ? '✓' : '';
+  }
   document.querySelectorAll('.cell:not(.locked)').forEach(cell => {
     const i = parseInt(cell.dataset.idx);
     cell.classList.toggle('done', state[i]);
@@ -345,6 +387,67 @@ window.addEventListener('hashchange', function() {
   });
   updateProgress();
 });
+
+// ── Star task ────────────────────────────────────────────────────
+function loadStar() {
+  const hash = window.location.hash.slice(1);
+  const bits = hash ? parseInt(hash, 36) : 0;
+  return !!(bits & (1 << 25));
+}
+
+let starDone = isUnlocked ? loadStar() : false;
+
+// ── Updated saveState (includes star bit 25) ─────────────────────
+function saveState(st, star) {
+  let bits = 0;
+  st.forEach((v, i) => { if (v) bits |= (1 << i); });
+  if (star) bits |= (1 << 25);
+  history.replaceState(null, '', '#' + bits.toString(36));
+  updateSaveHint(st);
+}
+
+// ── Count completed lines ────────────────────────────────────────
+function countLines() {
+  let n = 0;
+  for (let r = 0; r < 5; r++) { if (state.slice(r*5, r*5+5).every(Boolean)) n++; }
+  for (let c = 0; c < 5; c++) { if ([0,1,2,3,4].every(r => state[r*5+c])) n++; }
+  if ([0,6,12,18,24].every(i => state[i])) n++;
+  if ([4,8,12,16,20].every(i => state[i])) n++;
+  return n;
+}
+
+// ── Update score display ─────────────────────────────────────────
+function updateScore() {
+  if (!isUnlocked) return;
+  const done = state.filter(Boolean).length;
+  const lines = countLines();
+  const starPts = starDone ? 5 : 0;
+  const score = done + lines * 2 + starPts;
+
+  document.getElementById('scoreNum').textContent = score;
+
+  const parts = [];
+  if (done > 0) parts.push(done + ' зад. ×1');
+  if (lines > 0) parts.push(lines + ' лин. ×2');
+  if (starPts > 0) parts.push('⭐ ×5');
+  document.getElementById('scoreDetail').innerHTML = parts.length ? parts.join(' · ') : '&nbsp;';
+}
+
+// ── Star task interactivity ──────────────────────────────────────
+if (isUnlocked) {
+  const starBlock = document.getElementById('starBlock');
+  const starCheck = document.getElementById('starCheck');
+  if (starDone) { starBlock.classList.add('done'); starCheck.textContent = '✓'; }
+  starBlock.addEventListener('click', function() {
+    starDone = !starDone;
+    this.classList.toggle('done');
+    starCheck.textContent = starDone ? '✓' : '';
+    saveState(state, starDone);
+    updateScore();
+  });
+} else {
+  document.getElementById('starBlock').classList.add('locked-star');
+}
 </script>
 </body>
 </html>
