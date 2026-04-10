@@ -101,7 +101,6 @@ https://www.perplexity.ai/computer
   .cat-habit .cell-cat { color: var(--habit-text); }
   .cat-habit .cell-sep { background: var(--habit); }
 
-  /* Locked cell */
   .cell.locked {
     background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 30%, #fff9c4 60%, #ffe0b2 100%);
     border-color: #c8e6c9; cursor: default;
@@ -166,13 +165,27 @@ https://www.perplexity.ai/computer
     .cell.locked .lock-date { font-size: 10px; }
   }
 
-  /* Score display */
+  /* ── Score display (current week) ─── */
   .score-box { text-align: center; margin: 4px auto 8px; }
   .score-num { font-size: 40px; font-weight: 900; color: #2E7D32; line-height: 1; }
   .score-lbl { font-size: 10px; color: #bbb; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
   .score-detail { font-size: 11px; color: #999; margin-top: 3px; min-height: 16px; font-weight: 600; }
 
-  /* Star task */
+  /* ── Total score block ─── */
+  .total-box {
+    max-width: 600px; margin: 8px auto 0;
+    background: linear-gradient(135deg, #e8f5e9, #f3e5f5);
+    border: 2px solid #a5d6a7;
+    border-radius: 14px; padding: 10px 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .total-left { flex: 1; }
+  .total-lbl { font-size: 10px; font-weight: 800; color: #555; text-transform: uppercase; letter-spacing: 0.07em; }
+  .total-weeks { font-size: 10px; color: #999; font-weight: 600; margin-top: 2px; }
+  .total-num { font-size: 36px; font-weight: 900; color: #1b5e20; line-height: 1; }
+  .total-unit { font-size: 10px; color: #bbb; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; }
+
+  /* ── Star task ─── */
   .star-block {
     max-width: 600px; margin: 10px auto 0;
     background: #fffde7; border: 2.5px solid #ffd54f;
@@ -207,11 +220,22 @@ https://www.perplexity.ai/computer
 <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
 <div class="score-box">
   <div class="score-num" id="scoreNum">0</div>
-  <div class="score-lbl">баллов</div>
+  <div class="score-lbl">баллов за неделю 3</div>
   <div class="score-detail" id="scoreDetail">&nbsp;</div>
 </div>
 
-<div class="legend">
+<div class="total-box" id="totalBox">
+  <div class="total-left">
+    <div class="total-lbl">🏆 Итого за все недели</div>
+    <div class="total-weeks" id="totalWeeks">&nbsp;</div>
+  </div>
+  <div>
+    <div class="total-num" id="totalNum">—</div>
+    <div class="total-unit">баллов</div>
+  </div>
+</div>
+
+<div class="legend" style="margin-top:12px">
   <span class="legend-item" style="background:var(--sport-bg);color:var(--sport-text);">Спорт</span>
   <span class="legend-item" style="background:var(--photo-bg);color:var(--photo-text);">Фото</span>
   <span class="legend-item" style="background:var(--order-bg);color:var(--order-text);">Порядок</span>
@@ -284,7 +308,7 @@ const springIcons = ['🌸','🌷','🌻','🌼','🍀','🌿','☘️','🦋','
 
 const isUnlocked = new Date() >= UNLOCK_DATE;
 
-// ── State: URL hash, 26 bits (0–24 = tasks, 25 = star) ─────────────
+// ── State: URL hash, 26 bits (0–24 = tasks, 25 = star) ───────────
 function loadState() {
   const hash = window.location.hash.slice(1);
   const bits = hash ? parseInt(hash, 36) : 0;
@@ -310,7 +334,18 @@ function updateSaveHint(st) {
   if (el) el.style.display = st.some(Boolean) ? 'block' : 'none';
 }
 
-// ── Count completed lines (rows, cols, diagonals) ────────────────────
+// ── localStorage key for each week's score ───────────────────────
+const LS_KEY = 'bingo_spring_score_w';
+
+function saveScoreToLS(score) {
+  try { localStorage.setItem(LS_KEY + WEEK, score); } catch(e) {}
+}
+
+function getScoreFromLS(w) {
+  try { return parseInt(localStorage.getItem(LS_KEY + w) || '0', 10) || 0; } catch(e) { return 0; }
+}
+
+// ── Count completed lines ────────────────────────────────────────
 function countLines() {
   let n = 0;
   for (let r = 0; r < 5; r++) {
@@ -324,14 +359,36 @@ function countLines() {
   return n;
 }
 
-// ── Score calculation ────────────────────────────────────────────────
-function updateScore() {
-  if (!isUnlocked) return;
+// ── Total score across all weeks ─────────────────────────────────
+function updateTotal(currentScore) {
+  saveScoreToLS(currentScore);
+  let total = 0;
+  const parts = [];
+  for (let w = 1; w <= 3; w++) {
+    const s = (w === WEEK) ? currentScore : getScoreFromLS(w);
+    total += s;
+    if (s > 0 || w === WEEK) parts.push('Н' + w + ': ' + s);
+  }
+  document.getElementById('totalNum').textContent = total;
+  document.getElementById('totalWeeks').textContent = parts.join(' · ');
+}
+
+// ── Score calculation ────────────────────────────────────────────
+function calcScore() {
   const done = state.filter(Boolean).length;
   const lines = countLines();
   const starPts = starDone ? 5 : 0;
   const blackout = done === 25 ? 10 : 0;
-  const score = done + lines * 2 + starPts + blackout;
+  return done + lines * 2 + starPts + blackout;
+}
+
+function updateScore() {
+  if (!isUnlocked) return;
+  const score = calcScore();
+  const done = state.filter(Boolean).length;
+  const lines = countLines();
+  const starPts = starDone ? 5 : 0;
+  const blackout = done === 25 ? 10 : 0;
 
   document.getElementById('scoreNum').textContent = score;
 
@@ -341,9 +398,11 @@ function updateScore() {
   if (starPts > 0) parts.push('⭐ ×5');
   if (blackout > 0) parts.push('💥 блэкаут +10');
   document.getElementById('scoreDetail').innerHTML = parts.length ? parts.join(' · ') : '&nbsp;';
+
+  updateTotal(score);
 }
 
-// ── Progress bar ─────────────────────────────────────────────────────
+// ── Progress bar ─────────────────────────────────────────────────
 function updateProgress() {
   if (!isUnlocked) return;
   const done = state.filter(Boolean).length;
@@ -351,7 +410,7 @@ function updateProgress() {
   updateScore();
 }
 
-// ── Bingo detection ──────────────────────────────────────────────────
+// ── Bingo detection ──────────────────────────────────────────────
 let prevBingoCount = 0;
 
 function checkBingo() {
@@ -362,7 +421,7 @@ function checkBingo() {
   prevBingoCount = count;
 }
 
-// ── Build grid ───────────────────────────────────────────────────────
+// ── Build grid ───────────────────────────────────────────────────
 let state = loadState();
 let starDone = isUnlocked ? loadStar() : false;
 
@@ -406,7 +465,7 @@ for (let r = 0; r < 5; r++) {
   }
 }
 
-// ── Star task ────────────────────────────────────────────────────────
+// ── Star task ────────────────────────────────────────────────────
 if (isUnlocked) {
   const starBlock = document.getElementById('starBlock');
   const starCheck = document.getElementById('starCheck');
@@ -425,7 +484,7 @@ if (isUnlocked) {
   document.getElementById('starBlock').classList.add('locked-star');
 }
 
-// ── hashchange (sharing progress via URL) ────────────────────────────
+// ── hashchange ───────────────────────────────────────────────────
 window.addEventListener('hashchange', function() {
   if (!isUnlocked) return;
   state = loadState();
@@ -445,7 +504,22 @@ window.addEventListener('hashchange', function() {
   updateProgress();
 });
 
-// ── Init ─────────────────────────────────────────────────────────────
+// ── Init ─────────────────────────────────────────────────────────
+// Show total from localStorage even if this week is locked
+(function initTotal() {
+  let total = 0;
+  const parts = [];
+  for (let w = 1; w <= 3; w++) {
+    const s = getScoreFromLS(w);
+    total += s;
+    if (s > 0) parts.push('Н' + w + ': ' + s);
+  }
+  if (parts.length > 0) {
+    document.getElementById('totalNum').textContent = total;
+    document.getElementById('totalWeeks').textContent = parts.join(' · ');
+  }
+})();
+
 updateProgress();
 if (isUnlocked) {
   prevBingoCount = countLines();
