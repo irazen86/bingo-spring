@@ -338,7 +338,12 @@ function updateSaveHint(st) {
 const LS_KEY = 'bingo_spring_score_w';
 
 function saveScoreToLS(score) {
-  try { localStorage.setItem(LS_KEY + WEEK, score); } catch(e) {}
+  // Only persist to localStorage if the user has their progress in the URL hash.
+  // This prevents overwriting a previous week's saved score when someone
+  // navigates back to that week without their personal progress link.
+  if (window.location.hash && window.location.hash.length > 1) {
+    try { localStorage.setItem(LS_KEY + WEEK, score); } catch(e) {}
+  }
 }
 
 function getScoreFromLS(w) {
