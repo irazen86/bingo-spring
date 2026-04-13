@@ -325,7 +325,9 @@ function saveState(st, star) {
   let bits = 0;
   st.forEach((v, i) => { if (v) bits |= (1 << i); });
   if (star) bits |= (1 << 25);
-  history.replaceState(null, '', '#' + bits.toString(36));
+  const hashVal = bits.toString(36);
+  history.replaceState(null, '', '#' + hashVal);
+  try { localStorage.setItem('bingo_spring_hash_w' + WEEK, hashVal); } catch(e) {}
   updateSaveHint(st);
 }
 
@@ -338,12 +340,7 @@ function updateSaveHint(st) {
 const LS_KEY = 'bingo_spring_score_w';
 
 function saveScoreToLS(score) {
-  // Only persist to localStorage if the user has their progress in the URL hash.
-  // This prevents overwriting a previous week's saved score when someone
-  // navigates back to that week without their personal progress link.
-  if (window.location.hash && window.location.hash.length > 1) {
-    try { localStorage.setItem(LS_KEY + WEEK, score); } catch(e) {}
-  }
+  try { localStorage.setItem(LS_KEY + WEEK, score); } catch(e) {}
 }
 
 function getScoreFromLS(w) {
@@ -425,6 +422,16 @@ function checkBingo() {
   }
   prevBingoCount = count;
 }
+
+// ── Restore hash from localStorage if URL has none ──────────────
+(function restoreHashFromLS() {
+  if (!window.location.hash || window.location.hash.length <= 1) {
+    try {
+      const saved = localStorage.getItem('bingo_spring_hash_w' + WEEK);
+      if (saved) history.replaceState(null, '', '#' + saved);
+    } catch(e) {}
+  }
+})();
 
 // ── Build grid ───────────────────────────────────────────────────
 let state = loadState();
