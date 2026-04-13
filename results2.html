@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Итоги — 2 недели · Бинго «Весеннее обновление»</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #F5F5F0;
+    min-height: 100vh;
+    padding: 16px 12px 32px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    font-size: 22px; font-weight: 900; color: #2E7D32; line-height: 1.2;
+  }
+  .header .sub {
+    font-size: 13px; color: #888; font-weight: 600; margin-top: 4px;
+  }
+  .header .period {
+    display: inline-block;
+    margin-top: 8px;
+    background: #E8F5E9; color: #2E7D32;
+    font-size: 12px; font-weight: 700;
+    padding: 4px 14px; border-radius: 20px;
+  }
+
+  /* Podium */
+  .podium {
+    display: flex; align-items: flex-end; justify-content: center;
+    gap: 10px; margin: 0 auto 24px; max-width: 420px;
+  }
+  .podium-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    border-radius: 14px 14px 0 0; padding: 12px 8px 10px;
+    position: relative;
+  }
+  .podium-item.gold   { background: linear-gradient(160deg,#fff9c4,#ffe082); order: 2; min-height: 130px; }
+  .podium-item.silver { background: linear-gradient(160deg,#f5f5f5,#e0e0e0); order: 1; min-height: 100px; }
+  .podium-item.bronze { background: linear-gradient(160deg,#fbe9e7,#ffccbc); order: 3; min-height: 85px; }
+  .podium-medal { font-size: 28px; line-height: 1; margin-bottom: 4px; }
+  .podium-name  { font-size: 11px; font-weight: 800; color: #333; text-align: center; line-height: 1.3; }
+  .podium-score { font-size: 22px; font-weight: 900; color: #1b5e20; margin-top: 4px; }
+  .podium-score-lbl { font-size: 9px; color: #888; font-weight: 700; text-transform: uppercase; }
+  .podium-w2    { font-size: 10px; color: #666; font-weight: 600; margin-top: 2px; }
+
+  /* Table */
+  .table-wrap { max-width: 640px; margin: 0 auto; }
+
+  .section-title {
+    font-size: 12px; font-weight: 800; color: #aaa;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin: 0 0 8px 4px;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 28px 1fr 52px 52px;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    transition: transform 0.15s;
+  }
+  .row:hover { transform: translateY(-1px); }
+
+  .row.top1 { background: linear-gradient(135deg, #fff9c4, #fff3cd); border: 2px solid #ffd54f; }
+  .row.top2 { background: linear-gradient(135deg, #f5f5f5, #ececec); border: 2px solid #bdbdbd; }
+  .row.top3 { background: linear-gradient(135deg, #fbe9e7, #ffd6cc); border: 2px solid #ffab91; }
+
+  .rank {
+    font-size: 14px; font-weight: 900; color: #ccc; text-align: center;
+  }
+  .row.top1 .rank { color: #f9a825; }
+  .row.top2 .rank { color: #9e9e9e; }
+  .row.top3 .rank { color: #ff7043; }
+
+  .name-block .name {
+    font-size: 13px; font-weight: 800; color: #222;
+  }
+  .name-block .badges {
+    font-size: 11px; margin-top: 1px; line-height: 1.3;
+  }
+  .badge-blackout { color: #c62828; font-weight: 700; }
+  .badge-star     { color: #f57f17; font-weight: 700; }
+  .badge-lines    { color: #1565c0; font-weight: 600; }
+
+  .score-cell { text-align: right; }
+  .score-cell .num { font-size: 18px; font-weight: 900; color: #2E7D32; }
+  .score-cell .lbl { font-size: 9px; color: #bbb; font-weight: 700; text-transform: uppercase; }
+
+  .score-cell.w2 .num { font-size: 15px; color: #555; }
+
+  .divider {
+    text-align: center;
+    font-size: 11px; color: #bbb; font-weight: 700;
+    margin: 12px 0 8px;
+    letter-spacing: 0.05em;
+  }
+
+  .legend-row {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    font-size: 11px; color: #999; font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .back-nav {
+    text-align: center; margin-top: 20px;
+  }
+  .back-nav a {
+    font-size: 12px; font-weight: 700; color: #4CAF50;
+    text-decoration: none; padding: 8px 20px;
+    border: 2px solid #4CAF50; border-radius: 20px;
+    display: inline-block;
+  }
+
+  @media (min-width: 480px) {
+    .header h1 { font-size: 26px; }
+    .row { grid-template-columns: 32px 1fr 64px 64px; }
+    .score-cell .num { font-size: 20px; }
+    .name-block .name { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🌿 Бинго «Весеннее обновление»</h1>
+  <div class="sub">Промежуточные итоги</div>
+  <div class="period">📅 30 марта — 12 апреля · 2 недели</div>
+</div>
+
+<!-- Podium top-3 by total -->
+<div class="podium">
+  <div class="podium-item silver">
+    <div class="podium-medal">🥈</div>
+    <div class="podium-name">Наташа<br>Сивоконь</div>
+    <div class="podium-score">108</div>
+    <div class="podium-score-lbl">баллов</div>
+    <div class="podium-w2">Н2: 64 · Н1: 44</div>
+  </div>
+  <div class="podium-item gold">
+    <div class="podium-medal">🥇</div>
+    <div class="podium-name">Ира<br>Шинкоренко</div>
+    <div class="podium-score">128</div>
+    <div class="podium-score-lbl">баллов</div>
+    <div class="podium-w2">Н2: 64 · Н1: 64</div>
+  </div>
+  <div class="podium-item bronze">
+    <div class="podium-medal">🥉</div>
+    <div class="podium-name">Саша<br>Новикова</div>
+    <div class="podium-score">103</div>
+    <div class="podium-score-lbl">баллов</div>
+    <div class="podium-w2">Н2: 64 · Н1: 39</div>
+  </div>
+</div>
+
+<div class="table-wrap">
+
+  <div class="legend-row">
+    <span>💥 Блэкаут (+10)</span>
+    <span>⭐ Зарядка каждый день (+5)</span>
+    <span>📐 линии ×2 балла</span>
+  </div>
+
+  <!-- Header row -->
+  <div style="display:grid;grid-template-columns:28px 1fr 52px 52px;gap:6px;padding:0 12px 6px;font-size:10px;font-weight:800;color:#bbb;text-transform:uppercase;letter-spacing:0.06em;max-width:640px;margin:0 auto;">
+    <div></div>
+    <div>Участник</div>
+    <div style="text-align:right">За Н2</div>
+    <div style="text-align:right">Итого</div>
+  </div>
+
+  <!-- Rows -->
+  <div class="row top1">
+    <div class="rank">1</div>
+    <div class="name-block">
+      <div class="name">Ира Шинкоренко</div>
+      <div class="badges"><span class="badge-blackout">💥 Блэкаут</span> · <span class="badge-star">⭐ Зарядка</span> · <span class="badge-lines">📐 12 линий</span></div>
+    </div>
+    <div class="score-cell w2"><div class="num">64</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">128</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row top2">
+    <div class="rank">2</div>
+    <div class="name-block">
+      <div class="name">Наташа Сивоконь</div>
+      <div class="badges"><span class="badge-blackout">💥 Блэкаут</span> · <span class="badge-star">⭐ Зарядка</span> · <span class="badge-lines">📐 12 линий</span></div>
+    </div>
+    <div class="score-cell w2"><div class="num">64</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">108</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row top3">
+    <div class="rank">3</div>
+    <div class="name-block">
+      <div class="name">Саша Новикова</div>
+      <div class="badges"><span class="badge-blackout">💥 Блэкаут</span> · <span class="badge-star">⭐ Зарядка</span> · <span class="badge-lines">📐 12 линий</span></div>
+    </div>
+    <div class="score-cell w2"><div class="num">64</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">103</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="divider">— остальные участники —</div>
+
+  <div class="row">
+    <div class="rank">4</div>
+    <div class="name-block">
+      <div class="name">Лена Невзорова</div>
+      <div class="badges"><span class="badge-star">⭐ Зарядка</span> · <span class="badge-lines">📐 7 линий</span></div>
+    </div>
+    <div class="score-cell w2"><div class="num">42</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">101</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">5</div>
+    <div class="name-block">
+      <div class="name">Оля Куянцева</div>
+      <div class="badges"><span class="badge-blackout">💥 Блэкаут</span> · <span class="badge-star">⭐ Зарядка</span> · <span class="badge-lines">📐 9 линий</span></div>
+    </div>
+    <div class="score-cell w2"><div class="num">57</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">94</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">6</div>
+    <div class="name-block">
+      <div class="name">Боря Зенков</div>
+      <div class="badges"><span class="badge-blackout">💥 Блэкаут</span> · <span class="badge-star">⭐ Зарядка</span> · <span class="badge-lines">📐 12 линий</span></div>
+    </div>
+    <div class="score-cell w2"><div class="num">64</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">80</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">7</div>
+    <div class="name-block">
+      <div class="name">Женя Чепикова</div>
+      <div class="badges"><span class="badge-lines">📐 10 линий</span></div>
+    </div>
+    <div class="score-cell w2"><div class="num">44</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">78</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">8</div>
+    <div class="name-block">
+      <div class="name">Юля Пугачева</div>
+      <div class="badges"><span class="badge-lines">📐 8 линий</span></div>
+    </div>
+    <div class="score-cell w2"><div class="num">39</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">72</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">9</div>
+    <div class="name-block">
+      <div class="name">Даша Учаева</div>
+      <div class="badges"><span class="badge-star">⭐ Зарядка</span> · <span class="badge-lines">📐 5 линий</span></div>
+    </div>
+    <div class="score-cell w2"><div class="num">37</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">69</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">10</div>
+    <div class="name-block">
+      <div class="name">Марина Рубанистая</div>
+      <div class="badges"><span class="badge-lines">📐 6 линий</span></div>
+    </div>
+    <div class="score-cell w2"><div class="num">35</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">62</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">11</div>
+    <div class="name-block">
+      <div class="name">Аня Распутина</div>
+      <div class="badges"><span class="badge-lines">📐 4 линии</span></div>
+    </div>
+    <div class="score-cell w2"><div class="num">30</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">56</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">12</div>
+    <div class="name-block">
+      <div class="name">Ира Болуж</div>
+      <div class="badges"><span class="badge-lines">📐 4 линии</span></div>
+    </div>
+    <div class="score-cell w2"><div class="num">28</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">54</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">13</div>
+    <div class="name-block">
+      <div class="name">Света Молчанова</div>
+      <div class="badges" style="color:#ccc;font-size:11px;">—</div>
+    </div>
+    <div class="score-cell w2"><div class="num">14</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">48</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">14</div>
+    <div class="name-block">
+      <div class="name">Наташа Антюхова</div>
+      <div class="badges" style="color:#ccc;font-size:11px;">—</div>
+    </div>
+    <div class="score-cell w2"><div class="num">11</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">47</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">14</div>
+    <div class="name-block">
+      <div class="name">Аня Рахматуллина</div>
+      <div class="badges"><span class="badge-lines">📐 3 линии</span></div>
+    </div>
+    <div class="score-cell w2"><div class="num">25</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">47</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">16</div>
+    <div class="name-block">
+      <div class="name">Наташа Антонова</div>
+      <div class="badges"><span class="badge-star">⭐ Зарядка</span> · <span class="badge-lines">📐 1 линия</span></div>
+    </div>
+    <div class="score-cell w2"><div class="num">21</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">45</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">17</div>
+    <div class="name-block">
+      <div class="name">Настя Карпова</div>
+      <div class="badges"><span class="badge-lines">📐 2 линии</span></div>
+    </div>
+    <div class="score-cell w2"><div class="num">23</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">39</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">18</div>
+    <div class="name-block">
+      <div class="name">Юля Стяжкина</div>
+      <div class="badges"><span class="badge-lines">📐 2 линии</span></div>
+    </div>
+    <div class="score-cell w2"><div class="num">20</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">37</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">19</div>
+    <div class="name-block">
+      <div class="name">Катя Москальчук</div>
+      <div class="badges" style="color:#ccc;font-size:11px;">—</div>
+    </div>
+    <div class="score-cell w2"><div class="num">8</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">19</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">20</div>
+    <div class="name-block">
+      <div class="name">Ксюша Бабий</div>
+      <div class="badges" style="color:#ccc;font-size:11px;">—</div>
+    </div>
+    <div class="score-cell w2"><div class="num">7</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">17</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">21</div>
+    <div class="name-block">
+      <div class="name">Толя Иванов</div>
+      <div class="badges" style="color:#ccc;font-size:11px;">—</div>
+    </div>
+    <div class="score-cell w2"><div class="num">0</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">14</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">22</div>
+    <div class="name-block">
+      <div class="name">Миша Елшин</div>
+      <div class="badges" style="color:#ccc;font-size:11px;">—</div>
+    </div>
+    <div class="score-cell w2"><div class="num">8</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">13</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">23</div>
+    <div class="name-block">
+      <div class="name">Илья Антонов</div>
+      <div class="badges" style="color:#ccc;font-size:11px;">—</div>
+    </div>
+    <div class="score-cell w2"><div class="num">7</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">11</div><div class="lbl">итого</div></div>
+  </div>
+
+  <div class="row">
+    <div class="rank">24</div>
+    <div class="name-block">
+      <div class="name">Дима Козлов</div>
+      <div class="badges" style="color:#ccc;font-size:11px;">—</div>
+    </div>
+    <div class="score-cell w2"><div class="num">0</div><div class="lbl">баллов</div></div>
+    <div class="score-cell"><div class="num">8</div><div class="lbl">итого</div></div>
+  </div>
+
+</div><!-- /table-wrap -->
+
+<div class="back-nav">
+  <a href="week2.html">← Карточка недели 2</a>
+</div>
+
+<footer style="text-align:center;padding:20px 0 8px;font-size:10px;color:#ccc;">
+  <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer" style="color:#ccc;text-decoration:none;">Created with Perplexity Computer</a>
+</footer>
+
+</body>
+</html>
